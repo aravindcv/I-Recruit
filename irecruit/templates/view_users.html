@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <title>{{ title }}</title>
+</head>
+<body>
+        <ul class="list-group">
+        {% for user in users %}
+        <li class="list-group-item" style="font-weight: bold;">
+            {{ user.email }}
+            <div class="btn-group container">
+            <button type="button" class="btn btn-primary">View Details</button>
+            <button type="button" class="btn btn-primary">Delete</button>
+        </div>
+        </li>
+        {% endfor %}
+        </ul>
+</body>
+</html>
