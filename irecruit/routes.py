@@ -1,8 +1,8 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify
 from flask_bcrypt import Bcrypt
 from irecruit import app, db, bcrypt
-from irecruit.forms import AdminloginForm, AdminForm, LoginForm, DetailsForm
-from irecruit.models import Admin, User, Skill
+from irecruit.forms import AdminloginForm, AdminForm, LoginForm, DetailsForm, CompanyForm
+from irecruit.models import Admin, User, Skill, Company
 from flask_login import login_user, current_user, logout_user, login_required, user_logged_in
 
 flag = 0
@@ -10,6 +10,7 @@ flag = 0
 @app.route("/adminlogin", methods = ['POST', 'GET'])
 def adminlogin():
     form = AdminloginForm()
+    db.create_all()
     if form.validate_on_submit():
         if form.username.data == "aravindcv" and form.password.data == "password":
             global flag
@@ -19,8 +20,21 @@ def adminlogin():
             return redirect(url_for('admin'))
     return render_template('adminlogin.html', title='Admin-Login', form=form)
 
+@app.route("/companylogin", methods = ['POST', 'GET'])
+def companylogin():
+    form = AdminloginForm()
+    db.create_all()
+    if form.validate_on_submit():
+        if form.username.data == "infosys" and form.password.data == "infosys":
+            flash('Login successful!', 'success')
+            return redirect(url_for('company'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('companylogin.html', title='Company-Login', form=form)
+
 @app.route("/admin", methods = ['POST', 'GET'])
 def admin():
+    db.create_all()
     if flag:
         form = AdminForm()
         if form.validate_on_submit():
@@ -39,6 +53,7 @@ def admin():
 @app.route("/", methods = ['POST', 'GET'])
 @app.route("/home", methods = ['POST', 'GET'])
 def home():
+    db.create_all()
     form = LoginForm()
     if form.validate_on_submit():
         user = Admin.query.filter_by(email=form.email.data).first()
@@ -60,6 +75,7 @@ def logout():
 @app.route("/details", methods = ['POST', 'GET'])
 def details():
     if current_user.is_authenticated:
+        db.create_all()
         form = DetailsForm()
         if form.validate_on_submit():
             try:
@@ -91,6 +107,27 @@ def test():
         flash('You are not logged in! Please login', 'danger')
         return redirect(url_for('home'))
     return render_template('test.html', title='Test', user=user)
+
+@app.route('/company')
+def company():
+    return render_template('company.html', title='Company')
+
+@app.route("/addcompany", methods = ['POST', 'GET'])
+def addcompany():
+    db.create_all()
+    if flag:
+        form = CompanyForm()
+        if form.validate_on_submit():
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            manager = Company(username=form.email.data, password=hashed_password)
+            db.session.add(manager)
+            db.session.commit()
+            flash('User added to the database successfully', 'success')
+    else:
+        flash('Admin not logged in!', 'danger')
+        return redirect(url_for('adminlogin'))
+    return render_template('addcompany.html', title='Add Company', form=form)
+
 
 @app.route('/view_users')
 def view_users():
