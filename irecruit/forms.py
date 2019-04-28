@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo
-from irecruit.models import Admin, User, Skill
+from irecruit.models import Admin, User, Skill, Company
 
 class AdminloginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -10,6 +10,13 @@ class AdminloginForm(FlaskForm):
 
 class AdminForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Submit')
+
+class CompanyForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
@@ -44,3 +51,10 @@ class DetailsForm(FlaskForm):
         'Level4',
         choices=[('beg', 'Beginner'), ('int', 'Intermediate'), ('adv', 'Advanced')])
     submit = SubmitField('Submit')
+
+    class QuestionForm(FlaskForm):
+        question = TextAreaField('Question', validators=[DataRequired()])
+        answer = TextAreaField('Answer', validators=[DataRequired()])
+        type = StringField('Domain', validators=[DataRequired()])
+        level = StringField('Level', validators=[DataRequired()])
+        submit = SubmitField('Login')
